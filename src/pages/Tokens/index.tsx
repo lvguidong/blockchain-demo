@@ -4,6 +4,7 @@ import type { Account, Transaction } from '@/types'
 import { particleSystem } from '@/components/ParticleSystem'
 import { COLORS } from '@/config/canvas'
 import { hexToRgba } from '@/utils/animations'
+import CanvasLayer, { type CanvasLayerRef } from '@/components/CanvasLayer'
 import styles from './TokensPage.module.css'
 
 const INITIAL_ACCOUNTS: Account[] = [
@@ -20,7 +21,7 @@ const TokensPage: React.FC = () => {
   const [toId, setToId] = useState('bob')
   const [amount, setAmount] = useState(10)
   const [error, setError] = useState('')
-  const containerRef = useRef<HTMLDivElement>(null)
+  const canvasLayerRef = useRef<CanvasLayerRef | null>(null)
 
   const handleSend = useCallback(() => {
     setError('')
@@ -29,40 +30,38 @@ const TokensPage: React.FC = () => {
     const to = accounts.find(a => a.id === toId)
 
     if (!from || !to) {
-      setError('Invalid sender or receiver')
+      setError(t('tokens.invalidSender'))
       return
     }
 
     if (fromId === toId) {
-      setError('Cannot send to yourself')
+      setError(t('tokens.selfSend'))
       return
     }
 
     if (amount <= 0) {
-      setError('Amount must be positive')
+      setError(t('tokens.positiveAmount'))
       return
     }
 
     if (from.balance < amount) {
-      setError(`Insufficient funds. ${from.name} has ${from.balance} tokens.`)
-      // Shake animation effect via CSS
+      setError(t('tokens.insufficient', { name: from.name, balance: from.balance.toFixed(2) }))
       return
     }
 
-    // Emit flight particles
-    const container = containerRef.current
+    const container = canvasLayerRef.current?.container
     if (container) {
       const rect = container.getBoundingClientRect()
       const fromIdx = accounts.findIndex(a => a.id === fromId)
       const toIdx = accounts.findIndex(a => a.id === toId)
-      const fromX = ((fromIdx + 1) / (accounts.length + 1)) * rect.width
-      const toX = ((toIdx + 1) / (accounts.length + 1)) * rect.width
+      const spacing = rect.width / (accounts.length + 1)
+      const fromX = spacing * (fromIdx + 1)
+      const toX = spacing * (toIdx + 1)
 
       particleSystem.emitFlight(fromX, rect.height * 0.3, toX, rect.height * 0.3)
     }
 
-    // Update balances
-    const newTransactions: Transaction = {
+    const newTx: Transaction = {
       id: `tx-${Date.now()}`,
       from: fromId,
       to: toId,
@@ -79,11 +78,11 @@ const TokensPage: React.FC = () => {
       })
     )
 
-    setTransactions(prev => [newTransactions, ...prev].slice(0, 10))
+    setTransactions(prev => [newTx, ...prev].slice(0, 10))
     setAmount(10)
-  }, [fromId, toId, amount, accounts])
+  }, [fromId, toId, amount, accounts, t])
 
-  // Static draw: account avatars on canvas
+  // Static draw
   const onStaticDraw = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number) => {
     const avatarY = height * 0.3
     const spacing = width / (accounts.length + 1)
@@ -91,7 +90,6 @@ const TokensPage: React.FC = () => {
     accounts.forEach((account, i) => {
       const x = spacing * (i + 1)
 
-      // Avatar circle
       ctx.beginPath()
       ctx.arc(x, avatarY, 32, 0, Math.PI * 2)
       ctx.fillStyle = hexToRgba(account.color, 0.15)
@@ -100,31 +98,26 @@ const TokensPage: React.FC = () => {
       ctx.lineWidth = 2
       ctx.stroke()
 
-      // Avatar initial
       ctx.font = 'bold 20px sans-serif'
       ctx.fillStyle = account.color
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.fillText(account.name[0], x, avatarY)
 
-      // Name label
       ctx.font = '13px sans-serif'
       ctx.fillStyle = COLORS.textPrimary
       ctx.textBaseline = 'top'
       ctx.fillText(account.name, x, avatarY + 44)
 
-      // Balance
       ctx.font = 'bold 16px sans-serif'
       ctx.fillStyle = COLORS.gold
       ctx.fillText(`${account.balance.toFixed(2)}`, x, avatarY + 62)
 
-      // Token label
       ctx.font = '10px sans-serif'
       ctx.fillStyle = COLORS.textMuted
-      ctx.fillText('tokens', x, avatarY + 80)
+      ctx.fillText(t('tokens.tokens'), x, avatarY + 80)
     })
 
-    // Connection lines between accounts
     ctx.strokeStyle = hexToRgba(COLORS.borderDefault, 0.3)
     ctx.lineWidth = 1
     ctx.setLineDash([4, 4])
@@ -137,15 +130,25 @@ const TokensPage: React.FC = () => {
       ctx.stroke()
     }
     ctx.setLineDash([])
-  }, [accounts])
+  }, [accounts, t])
+
+  // Animation draw
+  const onAnimDraw = useCallback((ctx: CanvasRenderingContext2D, _width: number, _height: number, dt: number) => {
+    particleSystem.update(dt)
+    particleSystem.draw(ctx)
+  }, [])
 
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>{t('tokens.title')}</h1>
       <p className={styles.description}>{t('tokens.description')}</p>
 
-      <div ref={containerRef} className={styles.canvasWrapper}>
-        <canvas className={styles.canvas} />
+      <div className={styles.canvasWrapper}>
+        <CanvasLayer
+          ref={canvasLayerRef}
+          onStaticDraw={onStaticDraw}
+          onAnimDraw={onAnimDraw}
+        />
       </div>
 
       <div className={styles.transferForm}>
