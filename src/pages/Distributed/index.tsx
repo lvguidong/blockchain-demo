@@ -8,7 +8,7 @@ import { particleSystem } from '@/components/ParticleSystem'
 import { drawTopology, getNodePosition } from '@/components/Topology'
 import { COLORS } from '@/config/canvas'
 import { hexToRgba } from '@/utils/animations'
-import { lerp } from '@/utils/animations'
+import CanvasLayer, { type CanvasLayerRef } from '@/components/CanvasLayer'
 import HashDisplay from '@/components/HashDisplay'
 import styles from './DistributedPage.module.css'
 
@@ -28,13 +28,13 @@ const DistributedPage: React.FC = () => {
   const { difficulty } = useBlockchainStore()
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number>(0)
+  const canvasLayerRef = useRef<CanvasLayerRef | null>(null)
   const [blockCounts, setBlockCounts] = useState<Record<number, number>>({})
 
   // Initialize peers
   useEffect(() => {
     initPeers(difficulty)
 
-    // Compute block hashes asynchronously
     const timer = setTimeout(async () => {
       const currentPeers = useNetworkStore.getState().peers
       const updatedPeers = currentPeers.map(peer => ({
@@ -52,7 +52,6 @@ const DistributedPage: React.FC = () => {
       }
 
       useNetworkStore.setState({ peers: updatedPeers })
-      // Update block counts
       const counts: Record<number, number> = {}
       for (const peer of updatedPeers) {
         counts[peer.id] = peer.blocks.length
@@ -75,7 +74,6 @@ const DistributedPage: React.FC = () => {
       for (const packet of currentPackets) {
         const newProgress = packet.progress + 0.02
         if (newProgress >= 1) {
-          // Packet arrived - sync the peer
           syncPeer(packet.toPeer, packet.fromPeer)
           removePacket(packet.id)
           setBlockCounts(prev => {
@@ -109,10 +107,8 @@ const DistributedPage: React.FC = () => {
     const newBlock = createBlock(newId, 0, `Block ${newId} Data`, lastBlock.hash, difficulty)
     newBlock.hash = await computeBlockHash(newBlock)
 
-    // Add block to this peer
     addBlockToPeer(peerId, newBlock)
 
-    // Broadcast to other peers
     for (const otherPeer of currentPeers) {
       if (otherPeer.id !== peerId) {
         startBroadcast(peerId, otherPeer.id, newBlock)
@@ -124,8 +120,7 @@ const DistributedPage: React.FC = () => {
       [peerId]: (prev[peerId] || 0) + 1,
     }))
 
-    // Emit flight particles from source to targets
-    const container = containerRef.current
+    const container = canvasLayerRef.current?.container
     if (container) {
       const rect = container.getBoundingClientRect()
       const fromPos = getNodePosition(peer, rect.width, rect.height)
@@ -140,14 +135,12 @@ const DistributedPage: React.FC = () => {
 
   const handleTriggerFork = useCallback(() => {
     triggerFork()
-    // Simulate: Peer A and B mine different blocks simultaneously
     handleMineOnPeer(1)
     setTimeout(() => handleMineOnPeer(2), 100)
   }, [handleMineOnPeer])
 
   const handleResolveFork = useCallback(() => {
     resolveFork()
-    // Sync all to the longest chain (peer with most blocks)
     const currentPeers = useNetworkStore.getState().peers
     const longest = currentPeers.reduce((max, p) => p.blocks.length > max.blocks.length ? p : max, currentPeers[0])
     for (const peer of currentPeers) {
@@ -164,23 +157,21 @@ const DistributedPage: React.FC = () => {
     })
   }, [])
 
-  // Static draw: topology
+  // Static draw
   const onStaticDraw = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number) => {
     const currentPeers = useNetworkStore.getState().peers
     const currentPackets = useNetworkStore.getState().packets
     drawTopology(ctx, currentPeers, currentPackets, width, height, { top: 0, left: 0 })
 
-    // Draw block stacks below each peer
     for (const peer of currentPeers) {
       const baseY = peer.y * height + 70
       const blockCount = Math.max(peer.blocks.length, blockCounts[peer.id] || 0)
-      const spacing = Math.min(36, (height - baseY - 20) / blockCount)
+      const spacing = Math.min(36, (height - baseY - 20) / Math.max(blockCount, 1))
 
       for (let i = 0; i < Math.min(blockCount, 5); i++) {
         const bx = peer.x * width - 40
         const by = baseY + i * spacing
 
-        // Mini block rectangle
         const isTampered = peer.blocks[i]?.isTampered
         ctx.fillStyle = isTampered ? hexToRgba(COLORS.red, 0.2) : hexToRgba(COLORS.bgSurface, 0.8)
         ctx.fillRect(bx, by, 80, spacing - 4)
@@ -188,20 +179,24 @@ const DistributedPage: React.FC = () => {
         ctx.lineWidth = 1
         ctx.strokeRect(bx, by, 80, spacing - 4)
 
-        // Block number label
         ctx.font = '10px sans-serif'
         ctx.fillStyle = COLORS.textSecondary
         ctx.textAlign = 'center'
         ctx.fillText(`#${peer.blocks[i]?.id || i + 1}`, bx + 40, by + (spacing - 4) / 2 + 3)
       }
 
-      // Peer label
       ctx.font = 'bold 12px sans-serif'
       ctx.fillStyle = COLORS.textPrimary
       ctx.textAlign = 'center'
-      ctx.fillText(`Peer ${peer.label}`, peer.x * width, peer.y * height + 50)
+      ctx.fillText(`${t('distributed.peer')} ${peer.label}`, peer.x * width, peer.y * height + 50)
     }
-  }, [blockCounts])
+  }, [blockCounts, t])
+
+  // Animation draw
+  const onAnimDraw = useCallback((ctx: CanvasRenderingContext2D, _width: number, _height: number, dt: number) => {
+    particleSystem.update(dt)
+    particleSystem.draw(ctx)
+  }, [])
 
   return (
     <div className={styles.page}>
@@ -228,7 +223,11 @@ const DistributedPage: React.FC = () => {
 
       <div ref={containerRef} className={styles.topology}>
         <div className={styles.canvasContainer}>
-          <canvas className={styles.canvas} />
+          <CanvasLayer
+            ref={canvasLayerRef}
+            onStaticDraw={onStaticDraw}
+            onAnimDraw={onAnimDraw}
+          />
         </div>
       </div>
 
