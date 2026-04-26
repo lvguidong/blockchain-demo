@@ -165,10 +165,11 @@ const DistributedPage: React.FC = () => {
 
     for (const peer of currentPeers) {
       const baseY = peer.y * height + 70
-      const blockCount = Math.max(peer.blocks.length, blockCounts[peer.id] || 0)
-      const spacing = Math.min(36, (height - baseY - 20) / Math.max(blockCount, 1))
+      const totalBlocks = Math.max(peer.blocks.length, blockCounts[peer.id] || 0)
+      const renderedBlocks = Math.min(totalBlocks, 5)
+      const spacing = Math.min(36, (height - baseY - 20) / Math.max(renderedBlocks, 1))
 
-      for (let i = 0; i < Math.min(blockCount, 5); i++) {
+      for (let i = 0; i < renderedBlocks; i++) {
         const bx = peer.x * width - 40
         const by = baseY + i * spacing
 
