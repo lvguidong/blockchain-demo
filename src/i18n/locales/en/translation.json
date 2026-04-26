@@ -1,0 +1,101 @@
+{
+  "nav": {
+    "title": "Blockchain Demo",
+    "hash": "Hash",
+    "block": "Block",
+    "blockchain": "Blockchain",
+    "distributed": "Distributed",
+    "tokens": "Tokens",
+    "coinbase": "Coinbase"
+  },
+  "hash": {
+    "title": "SHA256 Hash",
+    "description": "Type anything to see its SHA256 hash. Notice how changing even one character produces a completely different hash.",
+    "inputLabel": "Input Data",
+    "hashLabel": "SHA256 Hash",
+    "placeholder": "Type anything here...",
+    "characters": "characters",
+    "bytes": "bytes",
+    "leadingZeros": "Leading zeros",
+    "hexChars": "64 hex characters (256 bits)",
+    "avalanche": "Avalanche Demo",
+    "compare": "Compare: One Character Changed",
+    "waiting": "Waiting for input..."
+  },
+  "block": {
+    "title": "Block",
+    "description": "A block contains data, a nonce, and a hash. Mining means finding the right nonce so the hash starts with enough zeros.",
+    "difficulty": "Difficulty",
+    "attempts": "attempts avg",
+    "target": "Target",
+    "nonce": "Nonce",
+    "data": "Data",
+    "prevHash": "Prev Hash",
+    "hash": "Hash",
+    "mine": "Mine",
+    "mining": "Mining...",
+    "found": "Found",
+    "tampered": "Tampered",
+    "tamper": "Tamper",
+    "success": "Nonce found! Hash starts with {{difficulty}} zeros. Try changing the data to see the chain break.",
+    "loading": "Initializing..."
+  },
+  "blockchain": {
+    "title": "Blockchain",
+    "description": "A chain of blocks where each references the previous. Tampering with any block breaks all subsequent blocks.",
+    "addBlock": "+ Add Block",
+    "fixChain": "Fix Chain",
+    "fixing": "Fixing...",
+    "brokenChain": "BROKEN CHAIN"
+  },
+  "distributed": {
+    "title": "Distributed Blockchain",
+    "description": "A blockchain network with multiple peers. When one peer mines a block, it broadcasts to others. Watch how consensus is achieved.",
+    "mine": "Mine on Peer {{label}}",
+    "simulateFork": "Simulate Fork",
+    "resolveConsensus": "Resolve Consensus",
+    "peer": "Peer",
+    "blocks": "blocks",
+    "synced": "synced",
+    "delayed": "delayed",
+    "forked": "forked",
+    "nonce": "nonce"
+  },
+  "tokens": {
+    "title": "Tokens",
+    "description": "Simple token transfer between accounts. Send tokens from one account to another and watch the balance update.",
+    "from": "From",
+    "to": "To",
+    "amount": "Amount",
+    "send": "Send",
+    "insufficient": "Insufficient funds. {{name}} has {{balance}} tokens.",
+    "invalidSender": "Invalid sender or receiver",
+    "selfSend": "Cannot send to yourself",
+    "positiveAmount": "Amount must be positive",
+    "recentTx": "Recent Transactions",
+    "tokens": "tokens",
+    "fee": "fee",
+    "wallet": "WALLET"
+  },
+  "coinbase": {
+    "title": "Coinbase",
+    "description": "Mining creates new coins as a reward. The reward halves periodically (Bitcoin halving). Mine blocks to earn coins!",
+    "mine": "Mine Block (+{{reward}} BTC)",
+    "mining": "Mining...",
+    "balance": "Miner Balance",
+    "mined": "Blocks Mined",
+    "reward": "Current Reward",
+    "halving": "Next Halving",
+    "blocks": "blocks",
+    "halvingProgress": "Halving Progress",
+    "notification": "Successfully mined! Earned {{reward}} BTC."
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "en": "English",
+    "zh": "中文"
+  }
+}

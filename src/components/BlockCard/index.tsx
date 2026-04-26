@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from 'react'
-import type { Block } from '@/types'
-import type { MiningStatus } from '@/types'
+import { useTranslation } from 'react-i18next'
+import type { Block, MiningStatus } from '@/types'
 import HashDisplay from '@/components/HashDisplay'
 import styles from './BlockCard.module.css'
 
@@ -27,6 +27,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
   onTamper,
   showTamperButton = false,
 }) => {
+  const { t } = useTranslation()
   const dataRef = useRef<HTMLTextAreaElement>(null)
   const nonceRef = useRef<HTMLInputElement>(null)
 
@@ -65,13 +66,13 @@ const BlockCard: React.FC<BlockCardProps> = ({
     <div className={cardClass} data-block-id={block.id}>
       <div className={styles.header}>
         <span className={styles.blockNumber}>#{block.id}</span>
-        {miningStatus === 'mining' && <span className={styles.miningBadge}>⛏ Mining</span>}
-        {miningStatus === 'success' && <span className={styles.successBadge}>✓ Found</span>}
-        {block.isTampered && <span className={styles.tamperBadge}>⚠ Tampered</span>}
+        {miningStatus === 'mining' && <span className={styles.miningBadge}>{t('block.mining')}</span>}
+        {miningStatus === 'success' && <span className={styles.successBadge}>{t('block.found')}</span>}
+        {block.isTampered && <span className={styles.tamperBadge}>{t('block.tampered')}</span>}
       </div>
 
       <div className={styles.field}>
-        <label className={styles.label}>Nonce</label>
+        <label className={styles.label}>{t('block.nonce')}</label>
         <input
           ref={nonceRef}
           className={styles.input}
@@ -83,7 +84,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
       </div>
 
       <div className={styles.field}>
-        <label className={styles.label}>Data</label>
+        <label className={styles.label}>{t('block.data')}</label>
         <textarea
           ref={dataRef}
           className={styles.textarea}
@@ -95,12 +96,12 @@ const BlockCard: React.FC<BlockCardProps> = ({
       </div>
 
       <div className={styles.field}>
-        <label className={styles.label}>Prev Hash</label>
+        <label className={styles.label}>{t('block.prevHash')}</label>
         <HashDisplay hash={block.prevHash} difficulty={0} />
       </div>
 
       <div className={styles.field}>
-        <label className={styles.label}>Hash</label>
+        <label className={styles.label}>{t('block.hash')}</label>
         <HashDisplay hash={block.hash} difficulty={difficulty} />
       </div>
 
@@ -110,11 +111,11 @@ const BlockCard: React.FC<BlockCardProps> = ({
           onClick={handleMine}
           disabled={miningStatus === 'mining'}
         >
-          {miningStatus === 'mining' ? 'Mining...' : 'Mine'}
+          {miningStatus === 'mining' ? t('block.mining') : t('block.mine')}
         </button>
         {showTamperButton && !block.isTampered && (
           <button className={styles.tamperBtn} onClick={handleTamper}>
-            Tamper
+            {t('block.tamper')}
           </button>
         )}
       </div>

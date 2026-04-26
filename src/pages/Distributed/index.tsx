@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNetworkStore } from '@/store/network'
 import { useBlockchainStore } from '@/store/blockchain'
 import { computeSHA256 } from '@/utils/sha256'
 import type { Peer, Block } from '@/types'
 import { particleSystem } from '@/components/ParticleSystem'
-import { drawTopology, getNodePosition, getPeerBelowPosition } from '@/components/Topology'
+import { drawTopology, getNodePosition } from '@/components/Topology'
 import { COLORS } from '@/config/canvas'
 import { hexToRgba } from '@/utils/animations'
 import { lerp } from '@/utils/animations'
@@ -22,6 +23,7 @@ function createBlock(id: number, nonce: number, data: string, prevHash: string, 
 }
 
 const DistributedPage: React.FC = () => {
+  const { t } = useTranslation()
   const { peers, packets, isSimulatingFork, initPeers, addBlockToPeer, startBroadcast, updatePacketProgress, removePacket, triggerFork, resolveFork, syncPeer } = useNetworkStore()
   const { difficulty } = useBlockchainStore()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -203,10 +205,8 @@ const DistributedPage: React.FC = () => {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Distributed Blockchain</h1>
-      <p className={styles.description}>
-        A blockchain network with multiple peers. When one peer mines a block, it broadcasts to others. Watch how consensus is achieved.
-      </p>
+      <h1 className={styles.title}>{t('distributed.title')}</h1>
+      <p className={styles.description}>{t('distributed.description')}</p>
 
       <div className={styles.controls}>
         {peers.map(peer => (
@@ -215,14 +215,14 @@ const DistributedPage: React.FC = () => {
             className={styles.mineBtn}
             onClick={() => handleMineOnPeer(peer.id)}
           >
-            Mine on Peer {peer.label}
+            {t('distributed.mine', { label: peer.label })}
           </button>
         ))}
         <button className={styles.forkBtn} onClick={handleTriggerFork} disabled={isSimulatingFork}>
-          Simulate Fork
+          {t('distributed.simulateFork')}
         </button>
         <button className={styles.resolveBtn} onClick={handleResolveFork} disabled={!isSimulatingFork}>
-          Resolve Consensus
+          {t('distributed.resolveConsensus')}
         </button>
       </div>
 
@@ -236,22 +236,24 @@ const DistributedPage: React.FC = () => {
         {peers.map(peer => (
           <div key={peer.id} className={styles.peerCard}>
             <div className={styles.peerHeader}>
-              <span className={styles.peerLabel}>Peer {peer.label}</span>
+              <span className={styles.peerLabel}>{t('distributed.peer')} {peer.label}</span>
               <span className={`${styles.peerStatus} ${
                 peer.syncStatus === 'synced' ? styles.statusSynced :
                 peer.syncStatus === 'delayed' ? styles.statusDelayed :
                 styles.statusForked
               }`}>
-                {peer.syncStatus}
+                {peer.syncStatus === 'synced' ? t('distributed.synced') :
+                 peer.syncStatus === 'delayed' ? t('distributed.delayed') :
+                 t('distributed.forked')}
               </span>
             </div>
             <div className={styles.blockCount}>
-              {peer.blocks.length} block{peer.blocks.length !== 1 ? 's' : ''}
+              {peer.blocks.length} {t('distributed.blocks')}
             </div>
             {peer.blocks.slice(-3).map(block => (
               <div key={block.id} className={styles.miniBlock}>
                 <span className={styles.miniBlockId}>#{block.id}</span>
-                <span className={styles.miniBlockNonce}>nonce: {block.nonce}</span>
+                <span className={styles.miniBlockNonce}>{t('distributed.nonce')}: {block.nonce}</span>
                 <HashDisplay hash={block.hash} difficulty={difficulty} />
               </div>
             ))}

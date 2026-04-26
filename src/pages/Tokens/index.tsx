@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { Account, Transaction } from '@/types'
 import { particleSystem } from '@/components/ParticleSystem'
 import { COLORS } from '@/config/canvas'
 import { hexToRgba } from '@/utils/animations'
-import { lerp, easeOutBack } from '@/utils/animations'
 import styles from './TokensPage.module.css'
 
 const INITIAL_ACCOUNTS: Account[] = [
@@ -13,6 +13,7 @@ const INITIAL_ACCOUNTS: Account[] = [
 ]
 
 const TokensPage: React.FC = () => {
+  const { t } = useTranslation()
   const [accounts, setAccounts] = useState<Account[]>(INITIAL_ACCOUNTS)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [fromId, setFromId] = useState('alice')
@@ -140,10 +141,8 @@ const TokensPage: React.FC = () => {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Tokens</h1>
-      <p className={styles.description}>
-        Simple token transfer between accounts. Send tokens from one account to another and watch the balance update.
-      </p>
+      <h1 className={styles.title}>{t('tokens.title')}</h1>
+      <p className={styles.description}>{t('tokens.description')}</p>
 
       <div ref={containerRef} className={styles.canvasWrapper}>
         <canvas className={styles.canvas} />
@@ -151,7 +150,7 @@ const TokensPage: React.FC = () => {
 
       <div className={styles.transferForm}>
         <div className={styles.formGroup}>
-          <label className={styles.label}>From</label>
+          <label className={styles.label}>{t('tokens.from')}</label>
           <select
             className={styles.select}
             value={fromId}
@@ -164,7 +163,7 @@ const TokensPage: React.FC = () => {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>Amount</label>
+          <label className={styles.label}>{t('tokens.amount')}</label>
           <input
             type="number"
             className={styles.input}
@@ -176,7 +175,7 @@ const TokensPage: React.FC = () => {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}>To</label>
+          <label className={styles.label}>{t('tokens.to')}</label>
           <select
             className={styles.select}
             value={toId}
@@ -192,7 +191,7 @@ const TokensPage: React.FC = () => {
           className={`${styles.sendBtn} ${error ? styles.sendBtnError : ''}`}
           onClick={handleSend}
         >
-          Send
+          {t('tokens.send')}
         </button>
       </div>
 
@@ -200,7 +199,7 @@ const TokensPage: React.FC = () => {
 
       {transactions.length > 0 && (
         <div className={styles.txHistory}>
-          <h3 className={styles.historyTitle}>Recent Transactions</h3>
+          <h3 className={styles.historyTitle}>{t('tokens.recentTx')}</h3>
           {transactions.map(tx => {
             const from = accounts.find(a => a.id === tx.from)
             const to = accounts.find(a => a.id === tx.to)
@@ -213,8 +212,8 @@ const TokensPage: React.FC = () => {
                 <span className={styles.txTo} style={{ color: to?.color }}>
                   {to?.name}
                 </span>
-                <span className={styles.txAmount}>{tx.amount.toFixed(2)} tokens</span>
-                <span className={styles.txFee}>({tx.fee} fee)</span>
+                <span className={styles.txAmount}>{tx.amount.toFixed(2)} {t('tokens.tokens')}</span>
+                <span className={styles.txFee}>({tx.fee} {t('tokens.fee')})</span>
               </div>
             )
           })}

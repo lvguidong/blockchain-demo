@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useBlockchainStore } from '@/store/blockchain'
 import { useMiningStore } from '@/store/mining'
 import { mineBlock } from '@/utils/mining'
@@ -14,6 +15,7 @@ import styles from './BlockchainPage.module.css'
 const INITIAL_BLOCK_COUNT = 4
 
 const BlockchainPage: React.FC = () => {
+  const { t } = useTranslation()
   const { difficulty, setDifficulty, blocks, initChain, updateBlockData, updateBlockNonce, tamperBlock, fixChain } = useBlockchainStore()
   const { status, startMining: startMiningAction, finishMining } = useMiningStore()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -151,16 +153,14 @@ const BlockchainPage: React.FC = () => {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Blockchain</h1>
-      <p className={styles.description}>
-        A chain of blocks where each references the previous. Tampering with any block breaks all subsequent blocks.
-      </p>
+      <h1 className={styles.title}>{t('blockchain.title')}</h1>
+      <p className={styles.description}>{t('blockchain.description')}</p>
 
       <div className={styles.controls}>
         <DifficultySlider difficulty={difficulty} onChange={setDifficulty} />
         <div className={styles.actions}>
           <button className={styles.actionBtn} onClick={handleAddBlock}>
-            + Add Block
+            {t('blockchain.addBlock')}
           </button>
           {blocks.some(b => b.isTampered) && (
             <button
@@ -168,7 +168,7 @@ const BlockchainPage: React.FC = () => {
               onClick={handleFixChain}
               disabled={fixingChain}
             >
-              {fixingChain ? 'Fixing...' : 'Fix Chain'}
+              {fixingChain ? t('blockchain.fixing') : t('blockchain.fixChain')}
             </button>
           )}
         </div>

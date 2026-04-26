@@ -1,8 +1,11 @@
-:root {
+/* === Dark Theme (default) === */
+:root,
+[data-theme='dark'] {
   --bg-primary: #0a0e17;
   --bg-surface: #1a1f2e;
   --bg-card: #1e2538;
   --bg-card-hover: #252b3b;
+  --bg-input: rgba(0, 0, 0, 0.3);
   --border-default: #2d3748;
   --border-mining: #fbbf24;
   --border-success: #22c55e;
@@ -20,6 +23,48 @@
   --pink: #ec4899;
   --orange: #f97316;
   --white: #ffffff;
+  --navbar-bg: #1a1f2e;
+  --navbar-border: #2d3748;
+  --card-shadow: rgba(0, 0, 0, 0.3);
+  --canvas-bg: rgba(0, 0, 0, 0.2);
+  --select-bg: rgba(0, 0, 0, 0.3);
+  --scrollbar-track: #0a0e17;
+  --scrollbar-thumb: #2d3748;
+  --scrollbar-thumb-hover: #64748b;
+}
+
+/* === Light Theme === */
+[data-theme='light'] {
+  --bg-primary: #f0f2f5;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8f9fa;
+  --bg-input: #f3f4f6;
+  --border-default: #e2e8f0;
+  --border-mining: #d97706;
+  --border-success: #16a34a;
+  --border-error: #dc2626;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --gold: #d97706;
+  --gold-glow: #f59e0b;
+  --green: #16a34a;
+  --red: #dc2626;
+  --blue: #2563eb;
+  --purple: #7c3aed;
+  --cyan: #0891b2;
+  --pink: #db2777;
+  --orange: #ea580c;
+  --white: #ffffff;
+  --navbar-bg: #ffffff;
+  --navbar-border: #e2e8f0;
+  --card-shadow: rgba(0, 0, 0, 0.08);
+  --canvas-bg: rgba(0, 0, 0, 0.03);
+  --select-bg: #f3f4f6;
+  --scrollbar-track: #f0f2f5;
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
 }
 
 * {
@@ -30,6 +75,7 @@
 
 html {
   font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
@@ -38,6 +84,7 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   line-height: 1.5;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -51,7 +98,7 @@ a {
   text-decoration: none;
 }
 
-input, textarea, button {
+input, textarea, button, select {
   font-family: inherit;
 }
 
@@ -65,14 +112,14 @@ button {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-default);
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: var(--scrollbar-thumb-hover);
 }

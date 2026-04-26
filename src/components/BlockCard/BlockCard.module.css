@@ -1,17 +1,17 @@
 .card {
-  background: var(--bg-card, #1e2538);
-  border: 2px solid var(--border-default, #2d3748);
+  background: var(--bg-card);
+  border: 2px solid var(--border-default);
   border-radius: 12px;
   padding: 16px;
   min-width: 280px;
   max-width: 320px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
   position: relative;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px var(--card-shadow);
 }
 
 .card:hover {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 30px var(--card-shadow);
 }
 
 .cardMining {

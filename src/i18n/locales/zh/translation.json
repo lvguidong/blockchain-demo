@@ -1,0 +1,101 @@
+{
+  "nav": {
+    "title": "区块链演示",
+    "hash": "哈希",
+    "block": "区块",
+    "blockchain": "区块链",
+    "distributed": "分布式",
+    "tokens": "代币",
+    "coinbase": "币基"
+  },
+  "hash": {
+    "title": "SHA256 哈希",
+    "description": "输入任意内容查看其 SHA256 哈希值。注意即使只改变一个字符，也会产生完全不同的哈希。",
+    "inputLabel": "输入数据",
+    "hashLabel": "SHA256 哈希",
+    "placeholder": "在这里输入任意内容...",
+    "characters": "字符",
+    "bytes": "字节",
+    "leadingZeros": "前导零",
+    "hexChars": "64 位十六进制字符（256 位）",
+    "avalanche": "雪崩效应演示",
+    "compare": "对比：仅改变一个字符",
+    "waiting": "等待输入..."
+  },
+  "block": {
+    "title": "区块",
+    "description": "一个区块包含数据、随机数和哈希。挖矿就是找到合适的随机数，使哈希值以足够数量的零开头。",
+    "difficulty": "难度",
+    "attempts": "平均尝试次数",
+    "target": "目标",
+    "nonce": "随机数",
+    "data": "数据",
+    "prevHash": "前一个哈希",
+    "hash": "哈希",
+    "mine": "挖矿",
+    "mining": "挖矿中...",
+    "found": "已找到",
+    "tampered": "已篡改",
+    "tamper": "篡改",
+    "success": "找到随机数！哈希以 {{difficulty}} 个零开头。尝试修改数据看看链如何断裂。",
+    "loading": "初始化中..."
+  },
+  "blockchain": {
+    "title": "区块链",
+    "description": "一条链式结构的区块，每个区块引用前一个。篡改任何区块都会使后续所有区块失效。",
+    "addBlock": "+ 添加区块",
+    "fixChain": "修复链",
+    "fixing": "修复中...",
+    "brokenChain": "链已断裂"
+  },
+  "distributed": {
+    "title": "分布式区块链",
+    "description": "一个包含多个节点的网络。当某个节点挖出新区块时，会广播给其他节点。观察共识如何达成。",
+    "mine": "在节点 {{label}} 上挖矿",
+    "simulateFork": "模拟分叉",
+    "resolveConsensus": "解决共识",
+    "peer": "节点",
+    "blocks": "个区块",
+    "synced": "已同步",
+    "delayed": "延迟",
+    "forked": "分叉",
+    "nonce": "随机数"
+  },
+  "tokens": {
+    "title": "代币",
+    "description": "账户间简单的代币转账。从一个账户发送到另一个账户，观察余额更新。",
+    "from": "发送方",
+    "to": "接收方",
+    "amount": "金额",
+    "send": "发送",
+    "insufficient": "余额不足。{{name}} 只有 {{balance}} 个代币。",
+    "invalidSender": "发送方或接收方无效",
+    "selfSend": "不能发送给自己",
+    "positiveAmount": "金额必须为正数",
+    "recentTx": "最近交易",
+    "tokens": "代币",
+    "fee": "手续费",
+    "wallet": "钱包"
+  },
+  "coinbase": {
+    "title": "币基",
+    "description": "挖矿会创建新币作为奖励。奖励会周期性减半（比特币减半）。挖矿产出代币！",
+    "mine": "挖出区块 (+{{reward}} BTC)",
+    "mining": "挖矿中...",
+    "balance": "矿工余额",
+    "mined": "已挖区块",
+    "reward": "当前奖励",
+    "halving": "下次减半",
+    "blocks": "个区块",
+    "halvingProgress": "减半进度",
+    "notification": "挖矿成功！获得 {{reward}} BTC。"
+  },
+  "theme": {
+    "light": "浅色",
+    "dark": "深色"
+  },
+  "language": {
+    "en": "English",
+    "zh": "中文"
+  }
+}

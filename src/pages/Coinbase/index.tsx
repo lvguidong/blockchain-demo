@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { computeSHA256 } from '@/utils/sha256'
 import { particleSystem } from '@/components/ParticleSystem'
 import { COLORS } from '@/config/canvas'
 import { hexToRgba } from '@/utils/animations'
-import { easeOutElastic } from '@/utils/animations'
 import styles from './CoinbasePage.module.css'
 
 const HALVING_SCHEDULE = [50, 25, 12.5, 6.25, 3.125, 1.5625]
@@ -19,6 +19,7 @@ interface CoinParticle {
 }
 
 const CoinbasePage: React.FC = () => {
+  const { t } = useTranslation()
   const [minerBalance, setMinerBalance] = useState(0)
   const [totalBlocksMined, setTotalBlocksMined] = useState(0)
   const [isMining, setIsMining] = useState(false)
@@ -278,10 +279,8 @@ const CoinbasePage: React.FC = () => {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Coinbase</h1>
-      <p className={styles.description}>
-        Mining creates new coins as a reward. The reward halves periodically (Bitcoin halving). Mine blocks to earn coins!
-      </p>
+      <h1 className={styles.title}>{t('coinbase.title')}</h1>
+      <p className={styles.description}>{t('coinbase.description')}</p>
 
       <div className={styles.canvasWrapper}>
         <canvas ref={canvasRef} className={styles.canvas} />
@@ -293,55 +292,49 @@ const CoinbasePage: React.FC = () => {
           onClick={handleMine}
           disabled={isMining}
         >
-          {isMining ? 'Mining...' : `Mine Block (+${currentReward} BTC)`}
+          {isMining ? t('coinbase.mining') : t('coinbase.mine', { reward: currentReward })}
         </button>
       </div>
 
       <div className={styles.stats}>
         <div className={styles.statCard}>
-          <div className={styles.statLabel}>Miner Balance</div>
+          <div className={styles.statLabel}>{t('coinbase.balance')}</div>
           <div className={styles.statValue} style={{ color: COLORS.gold }}>
             {minerBalance.toFixed(2)} BTC
           </div>
         </div>
 
         <div className={styles.statCard}>
-          <div className={styles.statLabel}>Blocks Mined</div>
+          <div className={styles.statLabel}>{t('coinbase.mined')}</div>
           <div className={styles.statValue}>{totalBlocksMined}</div>
         </div>
 
         <div className={styles.statCard}>
-          <div className={styles.statLabel}>Current Reward</div>
+          <div className={styles.statLabel}>{t('coinbase.reward')}</div>
           <div className={styles.statValue} style={{ color: COLORS.gold }}>
             {currentReward} BTC
           </div>
         </div>
 
         <div className={styles.statCard}>
-          <div className={styles.statLabel}>Next Halving</div>
-          <div className={styles.statValue}>{blocksUntilHalving} blocks</div>
+          <div className={styles.statLabel}>{t('coinbase.halving')}</div>
+          <div className={styles.statValue}>{blocksUntilHalving} {t('coinbase.blocks')}</div>
         </div>
       </div>
 
       <div className={styles.halvingSection}>
-        <div className={styles.halvingLabel}>Halving Progress</div>
+        <div className={styles.halvingLabel}>{t('coinbase.halvingProgress')}</div>
         <div className={styles.halvingBar}>
           <div
             className={styles.halvingFill}
             style={{ width: `${halvingProgress * 100}%` }}
           />
         </div>
-        <div className={styles.halvingInfo}>
-          <span>Reward: {currentReward} → {HALVING_SCHEDULE[Math.min(
-            Math.floor(totalBlocksMined / BLOCKS_PER_HALVING) + 1,
-            HALVING_SCHEDULE.length - 1
-          )]} BTC</span>
-        </div>
       </div>
 
       {lastReward > 0 && !isMining && (
         <div className={styles.rewardNotification}>
-          Successfully mined! Earned {lastReward} BTC.
+          {t('coinbase.notification', { reward: lastReward })}
         </div>
       )}
     </div>
