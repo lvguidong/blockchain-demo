@@ -1,0 +1,197 @@
+.card {
+  background: var(--bg-card, #1e2538);
+  border: 2px solid var(--border-default, #2d3748);
+  border-radius: 12px;
+  padding: 16px;
+  min-width: 280px;
+  max-width: 320px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.cardMining {
+  border-color: var(--border-mining, #fbbf24);
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+  animation: miningPulse 1s ease-in-out infinite;
+}
+
+.cardSuccess {
+  border-color: var(--border-success, #22c55e);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  animation: successFlash 0.5s ease-out;
+}
+
+.cardTampered {
+  border-color: var(--border-error, #ef4444);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+@keyframes miningPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.2); }
+  50% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.4); }
+}
+
+@keyframes successFlash {
+  0% { box-shadow: 0 0 40px rgba(34, 197, 94, 0.6); }
+  100% { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-default, #2d3748);
+}
+
+.blockNumber {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-primary, #e2e8f0);
+}
+
+.miningBadge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(251, 191, 36, 0.2);
+  color: var(--gold, #fbbf24);
+  border-radius: 10px;
+  animation: badgePulse 1s ease-in-out infinite;
+}
+
+.successBadge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(34, 197, 94, 0.2);
+  color: var(--green, #22c55e);
+  border-radius: 10px;
+}
+
+.tamperBadge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--red, #ef4444);
+  border-radius: 10px;
+}
+
+@keyframes badgePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.field {
+  margin-bottom: 10px;
+}
+
+.label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.input {
+  width: 100%;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-default, #2d3748);
+  border-radius: 6px;
+  color: var(--text-primary, #e2e8f0);
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  border-color: var(--blue, #3b82f6);
+}
+
+.input:disabled {
+  opacity: 0.6;
+}
+
+.textarea {
+  width: 100%;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-default, #2d3748);
+  border-radius: 6px;
+  color: var(--text-primary, #e2e8f0);
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.textarea:focus {
+  border-color: var(--blue, #3b82f6);
+}
+
+.textarea:disabled {
+  opacity: 0.6;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mineBtn {
+  flex: 1;
+  padding: 8px 16px;
+  background: var(--blue, #3b82f6);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.mineBtn:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.mineBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.mineBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mineBtnActive {
+  background: var(--gold, #fbbf24);
+  color: var(--bg-primary, #0a0e17);
+}
+
+.tamperBtn {
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--red, #ef4444);
+  border: 1px solid var(--red, #ef4444);
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tamperBtn:hover {
+  background: rgba(239, 68, 68, 0.3);
+}

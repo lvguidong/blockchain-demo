@@ -1,0 +1,183 @@
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.canvasWrapper {
+  width: 100%;
+  height: 200px;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  position: relative;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.transferForm {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  padding: 16px;
+  background: var(--bg-surface);
+  border-radius: 10px;
+  border: 1px solid var(--border-default);
+  flex-wrap: wrap;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.select, .input {
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.select:focus, .input:focus {
+  border-color: var(--blue);
+}
+
+.input {
+  width: 100px;
+}
+
+.sendBtn {
+  padding: 8px 24px;
+  background: var(--blue);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-self: flex-end;
+}
+
+.sendBtn:hover {
+  background: #2563eb;
+}
+
+.sendBtnError {
+  background: var(--red);
+}
+
+.error {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--red);
+  border-radius: 8px;
+  color: var(--red);
+  font-size: 13px;
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.txHistory {
+  margin-top: 24px;
+  padding: 16px;
+  background: var(--bg-surface);
+  border-radius: 10px;
+  border: 1px solid var(--border-default);
+}
+
+.historyTitle {
+  font-size: 15px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.txRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-default);
+  font-size: 13px;
+}
+
+.txRow:last-child {
+  border-bottom: none;
+}
+
+.txFrom {
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.txArrow {
+  color: var(--text-muted);
+}
+
+.txTo {
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.txAmount {
+  color: var(--text-secondary);
+  margin-left: auto;
+  font-family: 'Courier New', monospace;
+}
+
+.txFee {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+@media (max-width: 768px) {
+  .transferForm {
+    flex-direction: column;
+  }
+
+  .sendBtn {
+    width: 100%;
+  }
+}
