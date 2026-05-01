@@ -179,6 +179,12 @@
 .mineBtnActive {
   background: var(--gold, #fbbf24);
   color: var(--bg-primary, #0a0e17);
+  animation: mineBtnPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes mineBtnPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); }
+  50% { box-shadow: 0 0 12px 4px rgba(251, 191, 36, 0.6); }
 }
 
 .tamperBtn {

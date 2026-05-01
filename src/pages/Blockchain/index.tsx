@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useBlockchainStore } from '@/store/blockchain'
 import { useMiningStore } from '@/store/mining'
 import { mineBlock } from '@/utils/mining'
+import { getMineAbortSignal } from '@/store/mining'
 import { particleSystem } from '@/components/ParticleSystem'
 import { startMining, triggerSuccess, updateMineAnimation } from '@/components/MineAnimation'
 import { COLORS } from '@/config/canvas'
@@ -17,7 +18,7 @@ const INITIAL_BLOCK_COUNT = 4
 const BlockchainPage: React.FC = () => {
   const { t } = useTranslation()
   const { difficulty, setDifficulty, blocks, initChain, updateBlockData, updateBlockNonce, tamperBlock, fixChain } = useBlockchainStore()
-  const { status, startMining: startMiningAction, finishMining } = useMiningStore()
+  const { status, startMining: startMiningAction, finishMining, cancelMining } = useMiningStore()
   const containerRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<Map<number, HTMLDivElement>>(new Map())
   const [fixingChain, setFixingChain] = useState(false)
@@ -59,27 +60,31 @@ const BlockchainPage: React.FC = () => {
     let startNonce = 0
     let result = null
 
-    while (!result) {
+    while (!result && !getMineAbortSignal()?.aborted) {
       result = await mineBlock(
         block.data,
         block.prevHash,
         block.id,
         difficulty,
         startNonce,
-        5000
+        100000,
+        undefined,
+        getMineAbortSignal()
       )
       if (!result) {
-        startNonce += 5000
+        startNonce += 100000
       }
     }
 
-    updateBlockNonce(blockId, result.nonce)
-    finishMining()
+    if (result) {
+      updateBlockNonce(blockId, result.nonce)
+      finishMining()
 
-    const cardEl = cardRefs.current.get(blockId)
-    if (cardEl) {
-      const rect = cardEl.getBoundingClientRect()
-      triggerSuccess(rect.left + rect.width / 2, rect.top + rect.height / 2)
+      const cardEl = cardRefs.current.get(blockId)
+      if (cardEl) {
+        const rect = cardEl.getBoundingClientRect()
+        triggerSuccess(rect.left + rect.width / 2, rect.top + rect.height / 2)
+      }
     }
   }, [difficulty, startMiningAction, finishMining, updateBlockNonce])
 
@@ -194,6 +199,7 @@ const BlockchainPage: React.FC = () => {
                 onDataChange={handleDataChange}
                 onNonceChange={handleNonceChange}
                 onMine={handleMine}
+                onCancelMine={cancelMining}
                 onTamper={handleTamper}
                 showTamperButton={!block.isTampered}
               />

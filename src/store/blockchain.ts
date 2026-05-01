@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { Block } from '@/types'
 import { computeSHA256 } from '@/utils/sha256'
+import { mineBlock } from '@/utils/mining'
 
 const GENESIS_PREV_HASH = '0'.repeat(64)
 
@@ -136,31 +137,24 @@ export const useBlockchainStore = create<BlockchainState>((set, get) => ({
     }
     newBlocks[idx].isTampered = false
 
-    // Mine each block from this point forward
+    // Mine each block from this point forward using the same batched approach
     for (let i = idx; i < newBlocks.length; i++) {
       if (i > 0) {
         newBlocks[i] = { ...newBlocks[i], prevHash: newBlocks[i - 1].hash }
       }
 
-      let nonce = 0
-      let hash = ''
-      let found = false
-      const maxNonce = 500000
+      const result = await mineBlock(
+        newBlocks[i].data,
+        newBlocks[i].prevHash,
+        newBlocks[i].id,
+        difficulty,
+        0,
+        100000
+      )
 
-      while (nonce < maxNonce && !found) {
-        const input = `${newBlocks[i].id}${nonce}${newBlocks[i].data}${newBlocks[i].prevHash}`
-        const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input))
-        const hashArray = Array.from(new Uint8Array(hashBuffer))
-        hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-
-        if (hash.startsWith(target)) {
-          found = true
-        } else {
-          nonce++
-        }
+      if (result) {
+        newBlocks[i] = { ...newBlocks[i], nonce: result.nonce, hash: result.hash, isTampered: false }
       }
-
-      newBlocks[i] = { ...newBlocks[i], nonce, hash, isTampered: false }
     }
 
     set({ blocks: newBlocks })

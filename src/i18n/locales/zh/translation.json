@@ -34,6 +34,7 @@
     "hash": "哈希",
     "mine": "挖矿",
     "mining": "挖矿中...",
+    "cancelMine": "取消",
     "found": "已找到",
     "tampered": "已篡改",
     "tamper": "篡改",

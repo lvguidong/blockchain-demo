@@ -12,6 +12,7 @@ interface BlockCardProps {
   onDataChange?: (blockId: number, data: string) => void
   onNonceChange?: (blockId: number, nonce: number) => void
   onMine?: (blockId: number) => void
+  onCancelMine?: () => void
   onTamper?: (blockId: number) => void
   showTamperButton?: boolean
 }
@@ -24,6 +25,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
   onDataChange,
   onNonceChange,
   onMine,
+  onCancelMine,
   onTamper,
   showTamperButton = false,
 }) => {
@@ -106,13 +108,21 @@ const BlockCard: React.FC<BlockCardProps> = ({
       </div>
 
       <div className={styles.actions}>
-        <button
-          className={`${styles.mineBtn} ${miningStatus === 'mining' ? styles.mineBtnActive : ''}`}
-          onClick={handleMine}
-          disabled={miningStatus === 'mining'}
-        >
-          {miningStatus === 'mining' ? t('block.mining') : t('block.mine')}
-        </button>
+        {miningStatus === 'mining' ? (
+          <button
+            className={`${styles.mineBtn} ${styles.mineBtnActive}`}
+            onClick={onCancelMine}
+          >
+            {t('block.cancelMine')}
+          </button>
+        ) : (
+          <button
+            className={styles.mineBtn}
+            onClick={handleMine}
+          >
+            {t('block.mine')}
+          </button>
+        )}
         {showTamperButton && !block.isTampered && (
           <button className={styles.tamperBtn} onClick={handleTamper}>
             {t('block.tamper')}

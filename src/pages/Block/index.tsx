@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useBlockchainStore } from '@/store/blockchain'
 import { useMiningStore } from '@/store/mining'
 import { mineBlock } from '@/utils/mining'
+import { getMineAbortSignal } from '@/store/mining'
 import { computeSHA256 } from '@/utils/sha256'
 import { startMining, triggerSuccess } from '@/components/MineAnimation'
 import BlockCard from '@/components/BlockCard'
@@ -14,7 +15,7 @@ const GENESIS_PREV_HASH = '0'.repeat(64)
 const BlockPage: React.FC = () => {
   const { t } = useTranslation()
   const { difficulty, setDifficulty, blocks, initChain, updateBlockData, updateBlockNonce } = useBlockchainStore()
-  const { status, startMining: startMiningAction, finishMining } = useMiningStore()
+  const { status, startMining: startMiningAction, finishMining, cancelMining } = useMiningStore()
   const cardRef = useRef<HTMLDivElement>(null)
   const [slotNonce, setSlotNonce] = useState(0)
 
@@ -74,21 +75,24 @@ const BlockPage: React.FC = () => {
     let startNonce = 0
     let result = null
 
-    while (!result) {
+    while (!result && !getMineAbortSignal()?.aborted) {
       result = await mineBlock(
         currentBlock.data,
         currentBlock.prevHash,
         currentBlock.id,
         difficulty,
         startNonce,
-        5000,
-        (nonce) => setSlotNonce(nonce)
+        100000,
+        (nonce) => setSlotNonce(nonce),
+        getMineAbortSignal()
       )
-      if (!result) startNonce += 5000
+      if (!result) startNonce += 100000
     }
 
-    updateBlockNonce(blockId, result.nonce)
-    finishMining()
+    if (result) {
+      updateBlockNonce(blockId, result.nonce)
+      finishMining()
+    }
 
     if (cardRef.current) {
       const rect = cardRef.current.getBoundingClientRect()
@@ -115,6 +119,7 @@ const BlockPage: React.FC = () => {
           onDataChange={handleDataChange}
           onNonceChange={handleNonceChange}
           onMine={handleMine}
+          onCancelMine={cancelMining}
         />
       </div>
 

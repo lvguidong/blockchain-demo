@@ -1,5 +1,3 @@
-import { computeSHA256, hashMatchesDifficulty } from './sha256'
-
 export interface MineResult {
   nonce: number
   hash: string
@@ -12,13 +10,16 @@ export async function mineBlock(
   blockNumber: number,
   difficulty: number,
   startNonce = 0,
-  batchSize = 50000,
-  onProgress?: (nonce: number) => void
+  batchSize = 100000,
+  onProgress?: (nonce: number) => void,
+  signal?: AbortSignal
 ): Promise<MineResult | null> {
   const target = '0'.repeat(difficulty)
   const maxNonce = startNonce + batchSize
 
   for (let nonce = startNonce; nonce < maxNonce; nonce++) {
+    if (signal?.aborted) return null
+
     const input = `${blockNumber}${nonce}${data}${prevHash}`
     const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input))
     const hashArray = Array.from(new Uint8Array(hashBuffer))
@@ -32,6 +33,9 @@ export async function mineBlock(
       onProgress(nonce)
     }
   }
+
+  // Yield to event loop so UI can render between batches
+  await new Promise<void>(resolve => setTimeout(resolve, 0))
 
   onProgress?.(maxNonce)
   return null
